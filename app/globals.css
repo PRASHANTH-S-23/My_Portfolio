@@ -56,15 +56,17 @@
   
   html {
     scroll-behavior: smooth;
+    @apply scroll-smooth;
   }
   
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
+    @apply font-bold tracking-tighter;
   }
 
   h1 {
@@ -82,23 +84,38 @@
   h4 {
     @apply text-xl md:text-2xl;
   }
+
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
 }
 
-/* Custom animations */
+/* Animation keyframes */
 @keyframes float {
-  0% {
-    transform: translateY(0px);
+  0%, 100% {
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
+    transform: translateY(-12px);
   }
 }
 
-.animate-float {
-  animation: float 4s ease-in-out infinite;
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 @keyframes gradient {
@@ -113,76 +130,173 @@
   }
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient 15s ease infinite;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Add utility classes for special effects */
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Animation classes */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 10s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 12s ease infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom utilities */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
   
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600;
+    @apply bg-clip-text text-transparent bg-gradient-to-r;
   }
   
-  .bg-gradient {
-    @apply bg-gradient-to-r from-primary/90 to-blue-600/90;
+  .bg-glass {
+    @apply bg-background/80 backdrop-blur-sm border border-border/50;
+  }
+  
+  .bg-grid {
+    background-image: linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
+                     linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
   
   .section-container {
-    @apply container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
   
   .section-heading {
-    @apply text-3xl md:text-4xl font-bold mb-12 text-center relative;
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center relative inline-block;
   }
   
   .section-heading::after {
     content: '';
-    @apply absolute w-20 h-1 bg-primary rounded left-1/2 -translate-x-1/2 bottom-[-0.75rem];
+    @apply absolute w-1/2 h-1 bg-gradient-to-r from-primary to-transparent rounded-full left-1/2 -translate-x-1/2 bottom-[-0.5rem];
+  }
+  
+  .highlight-text {
+    @apply relative inline-block;
+  }
+  
+  .highlight-text::after {
+    content: '';
+    @apply absolute w-full h-2 bg-primary/20 bottom-1 left-0 -z-10;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+  }
+  
+  .highlight-text:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  
+  .delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .delay-300 {
+    animation-delay: 300ms;
+  }
+  
+  .scroll-mt-header {
+    scroll-margin-top: 5rem;
+  }
+  
+  /* For Webkit browsers */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* Custom scrollbar */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
+/* Responsive tweaks */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-  50% {
-    transform: translateY(-10px);
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-}
-
-@keyframes float-slow {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes float-delayed {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-.animate-float {
-  animation: float 8s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: float-slow 10s ease-in-out infinite;
-  animation-delay: 1s;
-}
-
-.animate-float-delayed {
-  animation: float-delayed 9s ease-in-out infinite;
-  animation-delay: 2s;
 }

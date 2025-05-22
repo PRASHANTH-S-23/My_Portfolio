@@ -2,6 +2,7 @@ import Hero from "@/components/hero";
 import About from "@/components/about";
 import Skills from "@/components/skills";
 import Projects from "@/components/projects";
+import Certificates from "@/components/certificates";
 import Contact from "@/components/contact";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
@@ -29,6 +30,10 @@ export default function Home() {
           <Projects />
         </section>
         
+        <section id="certificates" className="py-16 md:py-24">
+          <Certificates />
+        </section>
+
         <section id="contact" className="py-16 md:py-24">
           <Contact />
         </section>
